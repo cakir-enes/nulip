@@ -111,11 +111,9 @@ export default {
     // then call it:
     function callBackend(x) {
       promisified({
-        cmd: "doSomething",
-        count: x,
+        cmd: "newStream",
         payload: {
-          state: "datasss",
-          data: 17,
+          tags: ["asd", "zxc", "cc", "asd", "zxczcx", "zx"],
         },
       })
         .then((response) => {
