@@ -67,6 +67,22 @@ impl Nulip {
     }
   }
 
+  pub fn get_stream(&self, stream_id: &str) -> Option<&Stream> {
+    self.streams.iter().find(|s| s.tags.is_empty())
+  }
+
+  pub fn threads<F: Fn(&Block)>(&self, stream_id: &str, f: F) {
+    if let Some(s) = self.get_stream(stream_id) {
+      s.threads
+        .iter()
+        .for_each(|t| t.borrow().blocks.iter().for_each(|b| f(b)));
+    }
+  }
+
+  pub fn plz(&self) -> Vec<&Stream> {
+    self.streams.iter().map(|s| s).collect()
+  }
+
   pub fn create_stream(&mut self, req: NewStream) {
     let tagged_with = |thread: &Thread| {
       req
