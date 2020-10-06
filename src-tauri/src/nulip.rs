@@ -1,9 +1,13 @@
-use chrono::prelude;
 use chrono::DateTime;
 use chrono::Utc;
-use std::collections::{BTreeMap, HashSet};
+use serde::{Deserialize, Serialize};
 use std::rc::Rc;
+use std::{
+  cell::RefCell,
+  collections::{BTreeMap, HashSet},
+};
 
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Block {
   id: String,
   created_at: DateTime<Utc>,
@@ -20,23 +24,24 @@ impl Block {
   }
 }
 
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Thread {
   id: String,
   created_at: DateTime<Utc>,
   name: String,
+  tags: HashSet<String>,
   blocks: Vec<Block>,
-  tags: std::collections::HashSet<String>,
 }
 
 impl Thread {}
 
+// #[derive(Deserialize, Serialize)]
 pub struct Stream {
   tags: HashSet<String>,
   created_at: DateTime<Utc>,
-  threads: Vec<std::rc::Rc<RefCell<Thread>>>,
+  threads: Vec<Rc<RefCell<Thread>>>,
 }
-use std::cell::RefCell;
-
+// #[derive(Deserialize, Serialize)]
 pub struct Nulip {
   streams: Vec<Stream>,
   threads: BTreeMap<String, Rc<RefCell<Thread>>>,
@@ -52,8 +57,8 @@ struct EditTags<'a> {
   tags: Vec<&'a str>,
   thread_id: &'a str,
 }
-use serde::{Deserialize, Serialize};
-#[derive(Deserialize)]
+
+#[derive(Serialize, Deserialize)]
 pub struct NewStream {
   pub tags: Vec<String>,
 }
@@ -128,4 +133,37 @@ impl Stream {
       tags: tags.iter().map(|t| t.to_string()).collect(),
     }
   }
+}
+
+#[test]
+fn check() {
+  let mut tags = HashSet::new();
+  tags.insert("tag1".to_string());
+  tags.insert("tag2".to_string());
+  // let mut t = Tags::new("tag1");
+  // t.tags.insert("t2".to_string());
+  let thread = Thread {
+    blocks: vec![
+      Block {
+        id: "ID1".to_string(),
+        content: "content this shta[[blocks]] babe".to_string(),
+        created_at: Utc::now(),
+      },
+      Block {
+        id: "ID2".to_string(),
+        content: "asdasdcontent this shta[[blocks]] babe".to_string(),
+        created_at: Utc::now(),
+      },
+    ],
+    created_at: Utc::now(),
+    id: "thread1".to_string(),
+    name: "THREAD 1".to_string(),
+    tags: tags,
+  };
+  let encoded = toml::to_string_pretty(&thread).unwrap();
+  let decoded: Thread = toml::from_str(&encoded).unwrap();
+  println!("{}", encoded);
+  println!("REENCODED");
+  let reencoded = toml::to_string(&decoded).unwrap();
+  println!("{}", reencoded);
 }
