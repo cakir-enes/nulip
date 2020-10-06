@@ -1,9 +1,13 @@
-use chrono::prelude;
 use chrono::DateTime;
 use chrono::Utc;
-use std::collections::{BTreeMap, HashSet};
+use serde::{Deserialize, Serialize};
 use std::rc::Rc;
+use std::{
+  cell::RefCell,
+  collections::{BTreeMap, HashSet},
+};
 
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Block {
   id: String,
   created_at: DateTime<Utc>,
@@ -20,23 +24,24 @@ impl Block {
   }
 }
 
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Thread {
   id: String,
   created_at: DateTime<Utc>,
   name: String,
+  tags: HashSet<String>,
   blocks: Vec<Block>,
-  tags: std::collections::HashSet<String>,
 }
 
 impl Thread {}
 
+// #[derive(Deserialize, Serialize)]
 pub struct Stream {
   tags: HashSet<String>,
   created_at: DateTime<Utc>,
-  threads: Vec<std::rc::Rc<RefCell<Thread>>>,
+  threads: Vec<Rc<RefCell<Thread>>>,
 }
-use std::cell::RefCell;
-
+// #[derive(Deserialize, Serialize)]
 pub struct Nulip {
   streams: Vec<Stream>,
   threads: BTreeMap<String, Rc<RefCell<Thread>>>,
@@ -52,8 +57,8 @@ struct EditTags<'a> {
   tags: Vec<&'a str>,
   thread_id: &'a str,
 }
-use serde::{Deserialize, Serialize};
-#[derive(Deserialize)]
+
+#[derive(Serialize, Deserialize)]
 pub struct NewStream {
   pub tags: Vec<String>,
 }

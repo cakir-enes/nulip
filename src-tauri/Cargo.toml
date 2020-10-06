@@ -1,5 +1,5 @@
 [package]
-authors = [ "you" ]
+authors = ["you"]
 build = "src/build.rs"
 default-run = "tulip"
 description = "A Tauri App"
@@ -10,18 +10,24 @@ repository = ""
 version = "0.1.0"
 
 [dependencies]
+<<<<<<< HEAD
 chrono = "0.4"
 toml = "0.5"
 serde = { version = "1.0", features = [ "derive" ] }
+=======
+chrono = {version = "0.4", features = ["serde"]}
+serde = {version = "1.0", features = ["derive"]}
+>>>>>>> 6951630... serde
 serde_json = "1.0"
-tauri = { version = "0.9", features = [ "all-api" ] }
+tauri = {version = "0.9", features = ["all-api"]}
+toml = "0.5"
 
 [target."cfg(windows)".build-dependencies]
 winres = "0.1"
 
 [features]
-embedded-server = [ "tauri/embedded-server" ]
-no-server = [ "tauri/no-server" ]
+embedded-server = ["tauri/embedded-server"]
+no-server = ["tauri/no-server"]
 
 [[bin]]
 name = "tulip"
