@@ -18,12 +18,12 @@ struct DoSomethingPayload {
 #[derive(Deserialize)]
 #[serde(tag = "cmd", rename_all = "camelCase")]
 enum Cmd {
-  DoSomething {
-    count: u64,
-    payload: DoSomethingPayload,
-    callback: String,
-    error: String,
-  },
+  // DoSomething {
+  //   count: u64,
+  //   payload: DoSomethingPayload,
+  //   callback: String,
+  //   error: String,
+  // },
   NewStream {
     payload: nulip::NewStream,
     callback: String,
@@ -78,28 +78,27 @@ fn main() {
 
         Ok(command) => {
           match command {
-            DoSomething {
-              count,
-              payload,
-              callback,
-              error,
-            } => tauri::execute_promise(
-              _webview,
-              move || {
-                if count > 5 {
-                  let response = Response {
-                    value: 5,
-                    message: "async response!",
-                  };
-                  Ok(response)
-                } else {
-                  Err(CommandError::new("count should be > 5").into())
-                }
-              },
-              callback,
-              error,
-            ),
-
+            // DoSomething {
+            //   count,
+            //   payload,
+            //   callback,
+            //   error,
+            // } => tauri::execute_promise(
+            //   _webview,
+            //   move || {
+            //     if count > 5 {
+            //       let response = Response {
+            //         value: 5,
+            //         message: "async response!",
+            //       };
+            //       Ok(response)
+            //     } else {
+            //       Err(CommandError::new("count should be > 5").into())
+            //     }
+            //   },
+            //   callback,
+            //   error,
+            // ),
             NewStream {
               payload,
               callback,
@@ -112,7 +111,7 @@ fn main() {
                   if payload.tags.len() > 5 {
                     let response = Response {
                       value: 5,
-                      message: "async response!",
+                      message: "asdas",
                     };
 
                     Ok(response)

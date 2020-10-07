@@ -60,11 +60,60 @@ pub struct NewStream {
 
 impl Nulip {
   pub fn new(folder: &str) -> Nulip {
-    Self {
-      streams: vec![],
-      path: folder.to_string(),
-      threads: BTreeMap::new(),
+    let paths = std::fs::read_dir(folder);
+    if paths.is_err() {
+      return Self {
+        streams: vec![],
+        path: folder.to_string(),
+        threads: BTreeMap::new(),
+      };
     }
+
+    let threads: Vec<Rc<RefCell<Thread>>> = paths
+      .unwrap()
+      .filter_map(Result::ok)
+      .map(|d| d.path())
+      .map(|d| std::fs::read_to_string(d))
+      .filter_map(Result::ok)
+      .filter_map(|s| Nulip::to_thread(s))
+      .map(|s| Rc::from(RefCell::from(s)))
+      .collect();
+
+    let mut streams: Vec<Stream> = (|| {
+      let content =
+        std::fs::read_to_string(std::path::Path::new(folder).join(".index")).unwrap_or_default();
+      content
+        .split("/n")
+        .map(|tags| {
+          tags
+            .split(",")
+            .map(|s| s.to_string())
+            .collect::<Vec<String>>()
+        })
+        .map(|tags| Stream::new(tags, vec![]))
+        .collect()
+    })();
+
+    let mut map = BTreeMap::new();
+    threads.iter().for_each(|tbox| {
+      let t = tbox.borrow();
+      map.insert(t.id.clone(), tbox.clone());
+      for stream in streams.iter_mut() {
+        if t.tags.is_subset(&stream.tags) {
+          stream.threads.push(tbox.clone())
+        }
+      }
+    });
+
+    Self {
+      streams,
+      threads: map,
+      path: folder.to_string(),
+    }
+  }
+
+  fn to_thread(str: String) -> Option<Thread> {
+    None
   }
 
   pub fn get_stream(&self, stream_id: &str) -> Option<&Stream> {
@@ -100,7 +149,7 @@ impl Nulip {
       .map(|thread| thread.clone())
       .collect();
 
-    let stream = Stream::new(&req.tags, tagged_threads);
+    let stream = Stream::new(req.tags, tagged_threads);
 
     self.streams.push(stream);
   }
@@ -121,11 +170,36 @@ impl Nulip {
 }
 
 impl Stream {
-  fn new(tags: &Vec<String>, threads: Vec<Rc<RefCell<Thread>>>) -> Self {
+  fn new(tags: Vec<String>, threads: Vec<Rc<RefCell<Thread>>>) -> Self {
     Self {
       created_at: Utc::now(),
       threads: threads,
       tags: tags.iter().map(|t| t.to_string()).collect(),
     }
+  }
+}
+
+fn main() {
+  use serde::{Deserialize, Serialize};
+  use toml;
+
+  struct Entry {
+    foo: String,
+    bar: String,
+  }
+
+  let toml_string = r#"
+  [[entry]]
+  foo = "a0"
+  bar = "b0"
+
+  [[entry]]
+  foo = "a1"
+  bar = "b1"
+  "#;
+  let v: toml::Value = toml::from_str(&toml_string).unwrap();
+  for v in v.as_table() {
+    // let x:  = v["asd"];
+    println!("{:?}", v)
   }
 }
