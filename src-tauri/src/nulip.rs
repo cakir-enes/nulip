@@ -7,6 +7,27 @@ use std::{
   collections::{BTreeMap, HashSet},
 };
 
+// #[derive(Deserialize, Serialize)]
+pub struct Nulip {
+  streams: Vec<Stream>,
+  threads: BTreeMap<String, Rc<RefCell<Thread>>>,
+  path: String,
+}
+
+pub struct Stream {
+  tags: HashSet<String>,
+  created_at: DateTime<Utc>,
+  threads: Vec<Rc<RefCell<Thread>>>,
+}
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Thread {
+  id: String,
+  created_at: DateTime<Utc>,
+  name: String,
+  tags: HashSet<String>,
+  blocks: Vec<Block>,
+}
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Block {
   id: String,
@@ -22,30 +43,6 @@ impl Block {
       content: content.to_string(),
     }
   }
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct Thread {
-  id: String,
-  created_at: DateTime<Utc>,
-  name: String,
-  tags: HashSet<String>,
-  blocks: Vec<Block>,
-}
-
-impl Thread {}
-
-// #[derive(Deserialize, Serialize)]
-pub struct Stream {
-  tags: HashSet<String>,
-  created_at: DateTime<Utc>,
-  threads: Vec<Rc<RefCell<Thread>>>,
-}
-// #[derive(Deserialize, Serialize)]
-pub struct Nulip {
-  streams: Vec<Stream>,
-  threads: BTreeMap<String, Rc<RefCell<Thread>>>,
-  path: String,
 }
 
 struct AppendBlock<'a> {
@@ -131,10 +128,6 @@ impl Nulip {
         .iter()
         .for_each(|t| t.borrow().blocks.iter().for_each(|b| f(b)));
     }
-  }
-
-  pub fn plz(&self) -> Vec<&Stream> {
-    self.streams.iter().map(|s| s).collect()
   }
 
   pub fn create_stream(&mut self, req: NewStream) {

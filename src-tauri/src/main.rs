@@ -3,10 +3,10 @@
   windows_subsystem = "windows"
 )]
 
-use serde::{Deserialize, Serialize};
-use tauri::Webview;
 mod nulip;
 
+use serde::{Deserialize, Serialize};
+use tauri::Webview;
 #[derive(Deserialize)]
 struct DoSomethingPayload {
   state: String,
