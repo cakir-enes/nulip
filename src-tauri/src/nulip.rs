@@ -55,6 +55,9 @@ struct EditTags<'a> {
   thread_id: &'a str,
 }
 
+struct CreateThread<'a> {
+  name: &'a str,
+}
 #[derive(Serialize, Deserialize)]
 pub struct NewStream {
   pub tags: Vec<String>,
@@ -115,7 +118,10 @@ impl Nulip {
   }
 
   fn to_thread(str: String) -> Option<Thread> {
-    None
+    match toml::from_str(&str) {
+      Ok(v) => Some(v),
+      Err(_) => None,
+    }
   }
 
   pub fn get_stream(&self, stream_id: &str) -> Option<&Stream> {
@@ -150,6 +156,24 @@ impl Nulip {
     let stream = Stream::new(req.tags, tagged_threads);
 
     self.streams.push(stream);
+  }
+
+  pub fn create_thread(&mut self, thread_name: &str, content: &str) -> String {
+    let id = "asd";
+    let tags: HashSet<String> = content
+      .split("\\s+")
+      .filter(|w| w.starts_with("#"))
+      .map(|t| t.to_string())
+      .collect();
+    let thread = Thread {
+      name: thread_name.to_string(),
+      created_at: Utc::now(),
+      id: id.to_string(),
+      blocks: vec![Block::new(content)],
+      tags,
+    };
+
+    id.to_string()
   }
 
   pub fn append_block(&mut self, thread_id: &str, content: &str) -> Option<()> {
