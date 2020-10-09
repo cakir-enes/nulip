@@ -2,9 +2,7 @@
   all(not(debug_assertions), target_os = "windows"),
   windows_subsystem = "windows"
 )]
-
 mod nulip;
-
 use serde::{Deserialize, Serialize};
 use tauri::Webview;
 #[derive(Deserialize)]

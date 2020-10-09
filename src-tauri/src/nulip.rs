@@ -6,7 +6,6 @@ use std::{
   cell::RefCell,
   collections::{BTreeMap, HashSet},
 };
-<<<<<<< HEAD
 
 // #[derive(Deserialize, Serialize)]
 pub struct Nulip {
@@ -28,8 +27,6 @@ pub struct Thread {
   tags: HashSet<String>,
   blocks: Vec<Block>,
 }
-=======
->>>>>>> 6951630f9b7ba9a08c60b3d9375b34ac47d536c4
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Block {
@@ -48,33 +45,6 @@ impl Block {
   }
 }
 
-<<<<<<< HEAD
-=======
-#[derive(Debug, Deserialize, Serialize)]
-pub struct Thread {
-  id: String,
-  created_at: DateTime<Utc>,
-  name: String,
-  tags: HashSet<String>,
-  blocks: Vec<Block>,
-}
-
-impl Thread {}
-
-// #[derive(Deserialize, Serialize)]
-pub struct Stream {
-  tags: HashSet<String>,
-  created_at: DateTime<Utc>,
-  threads: Vec<Rc<RefCell<Thread>>>,
-}
-// #[derive(Deserialize, Serialize)]
-pub struct Nulip {
-  streams: Vec<Stream>,
-  threads: BTreeMap<String, Rc<RefCell<Thread>>>,
-  path: String,
-}
-
->>>>>>> 6951630f9b7ba9a08c60b3d9375b34ac47d536c4
 struct AppendBlock<'a> {
   thread_id: &'a str,
   content: &'a str,
@@ -85,12 +55,9 @@ struct EditTags<'a> {
   thread_id: &'a str,
 }
 
-<<<<<<< HEAD
 struct CreateThread<'a> {
   name: &'a str,
 }
-=======
->>>>>>> 6951630f9b7ba9a08c60b3d9375b34ac47d536c4
 #[derive(Serialize, Deserialize)]
 pub struct NewStream {
   pub tags: Vec<String>,
@@ -192,7 +159,7 @@ impl Nulip {
   }
 
   pub fn create_thread(&mut self, thread_name: &str, content: &str) -> String {
-    let id = "asd";
+    let id = ulid::Ulid::new().to_string();
     let tags: HashSet<String> = content
       .split("\\s+")
       .filter(|w| w.starts_with("#"))
@@ -205,6 +172,7 @@ impl Nulip {
       blocks: vec![Block::new(content)],
       tags,
     };
+    let encoded = toml::to_string(&thread);
 
     id.to_string()
   }
@@ -234,7 +202,6 @@ impl Stream {
   }
 }
 
-<<<<<<< HEAD
 fn main() {
   use serde::{Deserialize, Serialize};
   use toml;
@@ -258,37 +225,4 @@ fn main() {
     // let x:  = v["asd"];
     println!("{:?}", v)
   }
-=======
-#[test]
-fn check() {
-  let mut tags = HashSet::new();
-  tags.insert("tag1".to_string());
-  tags.insert("tag2".to_string());
-  // let mut t = Tags::new("tag1");
-  // t.tags.insert("t2".to_string());
-  let thread = Thread {
-    blocks: vec![
-      Block {
-        id: "ID1".to_string(),
-        content: "content this shta[[blocks]] babe".to_string(),
-        created_at: Utc::now(),
-      },
-      Block {
-        id: "ID2".to_string(),
-        content: "asdasdcontent this shta[[blocks]] babe".to_string(),
-        created_at: Utc::now(),
-      },
-    ],
-    created_at: Utc::now(),
-    id: "thread1".to_string(),
-    name: "THREAD 1".to_string(),
-    tags: tags,
-  };
-  let encoded = toml::to_string_pretty(&thread).unwrap();
-  let decoded: Thread = toml::from_str(&encoded).unwrap();
-  println!("{}", encoded);
-  println!("REENCODED");
-  let reencoded = toml::to_string(&decoded).unwrap();
-  println!("{}", reencoded);
->>>>>>> 6951630f9b7ba9a08c60b3d9375b34ac47d536c4
 }
