@@ -1,0 +1,21 @@
+{
+  "name": "nulip",
+  "scripts": {
+    "start": "imba -w server.imba",
+    "build": "imba build server.imba"
+  },
+  "dependencies": {
+    "destyle.css": "^2.0.2",
+    "express": "^4.17.1",
+    "imba": "^2.0.0-alpha.129"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.22"
+  },
+  "repository": "cakir-enes/nulip",
+  "description": "",
+  "version": "1.0.0",
+  "homepage": "https://github.com/cakir-enes/nulip",
+  "author": "Author Name (https://github.com/cakir-enes)",
+  "license": "ISC"
+}
