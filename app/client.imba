@@ -13,8 +13,18 @@ global css html
 
 tag StreamSwitcher < div
 	
+	query = ""
+
+	def filter
+		emit 'optsChange', Array.from({length: 200}).fill("a")
+
 	<self[d:flex]>
-		<input[bg:none bd:none c:white p:2] @focus.log("ahhhha") placeholder="Switch Stream">
+		<input[bg:none bd:none c:white p:2] 
+			bind=query
+			@input.debounce=filter
+			@focus.emit-focused('stream')
+			@blur.emit-blured('stream')
+			placeholder="Switch Stream">
 
 
 
@@ -32,7 +42,6 @@ tag app
 				<timeline>
 				
 			<clippy>
-				<button @click.emit('optsChange', ["kekekek", "2"])>
 				<StreamSwitcher>
 			<editor>
 
