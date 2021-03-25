@@ -9,26 +9,10 @@ global css html
 	$text: #c9d1d9
 	$text2:#8b949e
 	$leaf:#7ee787
+	ff: 'Courier Prime', monospace
+	ff: 'Sen', sans-serif
+	ff: 'Syne Mono', monospace
 
-
-tag StreamSwitcher < div
-	
-	query = ""
-
-	def filter
-		emit 'optsChange', Array.from({length: 200}).fill("a")
-
-	<self[d:flex]>
-		<input[bg:none bd:none c:white p:2] 
-			bind=query
-			@input.debounce=filter
-			@focus.emit-focused('stream')
-			@blur.emit-blured('stream')
-			placeholder="Switch Stream">
-
-
-
-		
 
 tag app
 
@@ -42,7 +26,6 @@ tag app
 				<timeline>
 				
 			<clippy>
-				<StreamSwitcher>
 			<editor>
 
 imba.mount <app>

@@ -2,7 +2,7 @@ tag editor
 
 	<self[d:vflex]>
 		css button bg:$background bd:none c:$leaf mr:2 py:1 px:2 bxs:sm
-		<textarea[w:100% fs:sm h:20ch bg:$background2 c:#ff7b72]>
+		<textarea[w:100% fs:sm h:20ch bg:$background2 c:#ff7b72 ff: 'Courier Prime', monospace]>
 
 
 tag WithChar < div
