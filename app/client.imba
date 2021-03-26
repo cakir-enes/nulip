@@ -9,9 +9,7 @@ global css html
 	$text: #c9d1d9
 	$text2:#8b949e
 	$leaf:#7ee787
-	ff: 'Courier Prime', monospace
 	ff: 'Sen', sans-serif
-	ff: 'Syne Mono', monospace
 
 
 tag app
