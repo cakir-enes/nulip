@@ -18,11 +18,9 @@ tag app
 
 	<self[d:hflex bg:$background] @keydown.enter.prevent=(clippyOn = !clippyOn)>
 		<div[d:vflex bg:$background2  h:100vh w:80ch]>
-			if clippyOn 
-				<clippy>
-			else 
-				<timeline>
-				
+			<timeline 
+				@toggleSelect=(do $1.detail.selected = !($1.detail.selected))
+			>
 			<clippy>
 			<editor>
 

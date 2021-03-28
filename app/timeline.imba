@@ -4,16 +4,43 @@ tag timeline
 		}, {
 			id: "asd2", content: "bloccck", stream: "learn", topic: "crystal", postedAt: (new Date()).toLocaleString()
 			}]
+	
+	focused = null 
 
-	<self[d:vflex flg:1 of:auto c:white]
-		@toggleSelect=(do $1.detail.selected = !($1.detail.selected))>
+
+	def focusDown
+		console.log focused
+		focused = focused < (items.length - 1) ? focused + 1 : 0 
+
+	def focusUp
+		console.log focused
+		focused = focused > 0 ? focused - 1 : 0
+
+	def focusLast
+		focused = items.length - 1
+
+	def toggleFocused
+		emit('toggleSelect', items[focused] ?? {})
+
+	<self[d:vflex flg:1 of:auto c:white bd@focus:2px solid blue4]
+		tabindex=0
+		@focus=focusLast
+		@blur=(do focused = null)
+		@blockClick=(do focused = $1.detail; toggleFocused!)
+		@keydown.down.prevent=focusDown
+		@keydown.up.prevent=focusUp
+		@keydown.space=toggleFocused>
+
 		<span> JSON.stringify items.filter(do $1.selected).map do $1.id
-		for item in items
-			<Block item=item>
+		<ul>
+			for item, i in items
+				<Block i=i item=item focused=(focused is i)>
 
 
-tag Block < div
+tag Block < li
 	prop item
+	prop focused
+	prop i
 	
 	def info
 		<div[d:hflex p:2px bg:$background]>
@@ -36,10 +63,11 @@ tag Block < div
 	
 	<self[d:vflex pos:relative p:2 bg:$background c:$text m:2 mt:2px]
 		[bg:blue4]=item.selected
+		[bg:blue8]=focused
 		@mouseenter=(do showControls = true)
 		@mouseleave=(do showControls = false)>
-		console.log showControls
-		<div @click.emit-toggleSelect(item)>
+		
+		<div @click.emit-blockClick(i)>
 			if item.kind is "thread"
 				thread!
 			else
@@ -47,8 +75,8 @@ tag Block < div
 			info!
 		<div[d:hflex pos:absolute t:0 r:0 h:100% zi:2 bg:black o:0 ]
 			[o:0.7]=showControls>
-			<button @click.emit-edit(item)> "Edit"
-			<button @click.emit-delete(item)> "Del"
+			<span @click.emit-edit(item)> "Edit"
+			<span @click.emit-delete(item)> "Del"
 
 
 	
